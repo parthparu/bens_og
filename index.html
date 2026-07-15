@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben's Original | Marketing Analytics & Forecasting Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: #1f2937;
+            --border-color: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --brand-primary: #349ce4;
+            --brand-gradient: linear-gradient(135deg, #1c4c74 0%, #349ce4 100%);
+            --card-gradient: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            --accent-success: #10b981;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Container Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo-icon {
+            font-size: 1.75rem;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .logo-tag {
+            color: var(--brand-primary);
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--text-primary);
+            background-color: rgba(52, 156, 228, 0.1);
+            border-left: 4px solid var(--brand-primary);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2.5rem;
+            min-height: 100vh;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(to right, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .badge-live {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge-pulse {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-success);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+
+        /* Top KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .kpi-card {
+            background: var(--card-gradient);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: transform var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--brand-primary);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--brand-gradient);
+            opacity: 0.7;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .kpi-subtext {
+            font-size: 0.8rem;
+            color: var(--accent-success);
+            font-weight: 500;
+        }
+
+        /* Tab Content Panel Styling */
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main Chart Sections */
+        .chart-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .chart-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 550px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #ffffff; /* Plotly charts default to white backgrounds */
+        }
+
+        .chart-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Layout Grid for two charts side-by-side */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Insights Card styling */
+        .insights-box {
+            background: linear-gradient(135deg, rgba(28, 76, 116, 0.1) 0%, rgba(52, 156, 228, 0.05) 100%);
+            border: 1px dashed var(--brand-primary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .insights-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--brand-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .insights-list {
+            list-style-type: none;
+            padding-left: 0.5rem;
+        }
+
+        .insights-list li {
+            position: relative;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .insights-list li::before {
+            content: '•';
+            color: var(--brand-primary);
+            font-size: 1.25rem;
+            position: absolute;
+            left: 0;
+            top: -0.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 70px;
+                padding: 2rem 0.5rem;
+                align-items: center;
+            }
+            .logo-text, .logo-tag {
+                display: none;
+            }
+            .logo-container {
+                justify-content: center;
+                margin-bottom: 2rem;
+            }
+            .nav-item span {
+                display: none;
+            }
+            .nav-item {
+                justify-content: center;
+                padding: 1rem;
+            }
+            .main-content {
+                margin-left: 70px;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">📊</div>
+                <div>
+                    <div class="logo-text">Ben's Original</div>
+                    <div class="logo-tag">Marketing Analytics</div>
+                </div>
+            </div>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a class="nav-item active" onclick="switchTab(event, 'forecast')">📈 <span>Sales Forecast</span></a></li>
+                    <li><a class="nav-item" onclick="switchTab(event, 'marketing')">🎯 <span>Marketing Mix</span></a></li>
+                    <li><a class="nav-item" onclick="switchTab(event, 'correlation')">🔗 <span>Correlations</span></a></li>
+                    <li><a class="nav-item" onclick="switchTab(event, 'leaderboard')">🏆 <span>Model Leaderboard</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="main-content">
+            <header>
+                <div class="header-title">
+                    <h1>Executive Decision Cockpit</h1>
+                    <p>Strategic Insights & Machine Learning Forecasts</p>
+                </div>
+                <div class="badge-live">
+                    <span class="badge-pulse"></span>
+                    <span>Pipeline Static Build</span>
+                </div>
+            </header>
+
+            <!-- Top Level KPIs -->
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Pipeline Sales</div>
+                    <div class="kpi-value">$1.02B</div>
+                    <div class="kpi-subtext">Cumulative historical sales</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Marketing Spend</div>
+                    <div class="kpi-value">$18.89M</div>
+                    <div class="kpi-subtext">Across all media & channels</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">ROMI (Avg. ROI)</div>
+                    <div class="kpi-value">54.15x</div>
+                    <div class="kpi-subtext">Return on Marketing Investment</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Best Model</div>
+                    <div class="kpi-value">Random Forest</div>
+                    <div class="kpi-subtext">Holdout RMSE: 554,423</div>
+                </div>
+            </section>
+
+            <!-- TAB 1: Sales Forecast -->
+            <div id="forecast" class="tab-panel active">
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3>12-Week Rolling Sales Forecast</h3>
+                        <p>Actual weekly historical sales compared with future projections utilizing the champion machine learning model (Random Forest).</p>
+                    </div>
+                    <div class="chart-container">
+                        <iframe class="chart-iframe" src="outputs/figures/forecast_chart.html"></iframe>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3>Weekly Sales Trend</h3>
+                        <p>Historical trend lines tracking sales metrics over time.</p>
+                    </div>
+                    <div class="chart-container">
+                        <iframe class="chart-iframe" src="outputs/figures/weekly_sales_trend.html"></iframe>
+                    </div>
+                </div>
+
+                <div class="insights-box">
+                    <div class="insights-title">💡 Forecast Executive Summary</div>
+                    <ul class="insights-list">
+                        <li>The ML pipeline automatically screens six model variations (including ARIMAX, XGBoost, and Stacking Ensembles).</li>
+                        <li><strong>Random Forest</strong> was selected as the champion model due to its superior generalizability on out-of-sample holdout test data.</li>
+                        <li>Sales projections indicate stable future weekly revenue, but show strong seasonality components that model lags successfully replicate.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- TAB 2: Marketing Mix -->
+            <div id="marketing" class="tab-panel">
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3>Estimated Sales Contribution by Media Type</h3>
+                        <p>Deduplicated sales allocation comparing Paid Media, Earned & Shared Media, and Owned channels.</p>
+                    </div>
+                    <div class="chart-container">
+                        <iframe class="chart-iframe" src="outputs/figures/sales_by_media_type.html"></iframe>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3>Spend vs. Sales Scatter Correlation</h3>
+                        <p>Visualizing the direct relationship between weekly marketing expenditures and corresponding sales activity.</p>
+                    </div>
+                    <div class="chart-container">
+                        <iframe class="chart-iframe" src="outputs/figures/spend_vs_sales.html"></iframe>
+                    </div>
+                </div>
+
+                <div class="insights-box">
+                    <div class="insights-title">💡 Attribution & Allocation Insights</div>
+                    <ul class="insights-list">
+                        <li><strong>Paid Media</strong> is the dominant driver of value, capturing over 91.8% of the estimated sales contribution (~$939M).</li>
+                        <li>Earned & Shared media accounts for ~$67.1M, indicating healthy organic amplification.</li>
+                        <li>While spend correlates positively with sales, diminishing returns are observable at higher spend ranges, indicating optimization opportunities.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- TAB 3: Correlations -->
+            <div id="correlation" class="tab-panel">
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3>Spend / Impressions / Clicks / Engagements Heatmap</h3>
+                        <p>Cross-correlation matrix analyzing the relationships between different marketing funnel metrics and total sales.</p>
+                    </div>
+                    <div class="chart-container">
+                        <iframe class="chart-iframe" src="outputs/figures/correlation_heatmap.html"></iframe>
+                    </div>
+                </div>
+
+                <div class="insights-box">
+                    <div class="insights-title">💡 Correlation Insights</div>
+                    <ul class="insights-list">
+                        <li>Spend has a strong correlation with Impressions (0.83) and Clicks (0.82), demonstrating clean execution.</li>
+                        <li>Clicks show the highest direct correlation with Sales (0.20), suggesting that traffic quality or digital conversion remains key.</li>
+                        <li>Social engagements demonstrate a slightly negative relationship with sales (-0.10), suggesting that viral engagement does not immediately convert to store purchases.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- TAB 4: Model Leaderboard -->
+            <div id="leaderboard" class="tab-panel">
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3>Forecasting Model Tournament (RMSE)</h3>
+                        <p>Comparing out-of-sample Root Mean Squared Error across candidate architectures. Lower values represent more accurate projections.</p>
+                    </div>
+                    <div class="chart-container">
+                        <iframe class="chart-iframe" src="outputs/figures/model_leaderboard.html"></iframe>
+                    </div>
+                </div>
+
+                <div class="insights-box">
+                    <div class="insights-title">💡 Pipeline Modeling Notes</div>
+                    <ul class="insights-list">
+                        <li><strong>Random Forest</strong> leads the leaderboard (RMSE: ~554K), closely followed by Gradient Boosting (Huber Loss).</li>
+                        <li>Stacking Ensembles underperform single tree models slightly, suggesting potential overfitting due to the modest sample size (122 weeks).</li>
+                        <li>ARIMAX shows extremely high variance, indicating that pure statistical time series struggles with high-dimensionality spend features without strict regularizations.</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function switchTab(event, tabId) {
+            // Remove active classes from navigation items
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+
+            // Add active class to clicked navigation item
+            event.currentTarget.classList.add('active');
+
+            // Hide all tab panels
+            const panels = document.querySelectorAll('.tab-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            // Show target tab panel
+            const activePanel = document.getElementById(tabId);
+            if (activePanel) {
+                activePanel.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
