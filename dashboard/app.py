@@ -390,6 +390,28 @@ st.markdown(
 # ---------------------------------------------------------------------------
 # Cached data / model loading
 # ---------------------------------------------------------------------------
+def ensure_assets():
+    required_files = [
+        config.REPORTS_DIR / "row_level_clean.csv",
+        config.REPORTS_DIR / "weekly_feature_table.csv",
+        config.REPORTS_DIR / "weekly_sales.csv",
+        config.REPORTS_DIR / "raw_data.csv",
+        config.MODELS_DIR / "model_result.joblib",
+        config.MODELS_DIR / "shap_data.joblib"
+    ]
+    if not all(f.exists() for f in required_files):
+        with st.spinner("Initializing first-time setup: Running data prep and model training pipelines..."):
+            try:
+                import main
+                main.main()
+            except Exception as e:
+                st.error(f"Failed to run the background analytics pipeline: {e}")
+                st.stop()
+
+
+ensure_assets()
+
+
 @st.cache_data(show_spinner="Loading pre-computed data...")
 def get_data():
     # Force cache reload after data prep script update
