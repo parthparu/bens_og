@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.venv/
+*.egg-info/
+.DS_Store
+
+# Generated pipeline artifacts (regenerate with `python main.py`)
+outputs/models/*.joblib
+outputs/reports/*.csv
+outputs/figures/*.png
